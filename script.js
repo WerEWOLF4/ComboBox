@@ -37,9 +37,38 @@ const setupComboMenu = () => {
             comboInput.setAttribute('aria-activedescendant', 'combo1-value');
         }
     };
-  
+
+    const updateComboValue = (selectedOptionId) => {
+    
+        let comboValue = document.getElementById('combo1-value');
+
+        let selectedOption = document.getElementById(selectedOptionId);
+   
+        comboValue.textContent = selectedOption.textContent;
+     
+        selectedOption.setAttribute('aria-selected', 'true');
+        selectedOption.classList.add('option-current');
+
+      
+        let comboOptions = document.querySelectorAll('.combo-option');
+        comboOptions.forEach(option => {
+            if (option.id !== selectedOptionId) {
+                option.setAttribute('aria-selected', 'false');
+                option.classList.remove('option-current');
+            }
+        });
+
+      
+        isOpen = false;
+        comboMenu.classList.remove('open');
+        comboInput.setAttribute('aria-expanded', 'false');
+        comboInput.setAttribute('aria-activedescendant', 'combo1-value');
+    };
+
+
     comboInput.addEventListener('click', toggleComboMenu);
-  
+
+
     document.addEventListener('click', (event) => {
         if (!comboInput.contains(event.target) && !comboMenu.contains(event.target)) {
             isOpen = false;
@@ -48,9 +77,18 @@ const setupComboMenu = () => {
             comboInput.setAttribute('aria-activedescendant', 'combo1-value');
         }
     });
+
+
+    let comboOptions = document.querySelectorAll('.combo-option');
+    comboOptions.forEach(option => {
+        option.addEventListener('click', function () {
+            updateComboValue(option.id);
+        });
+    });
 };
 
-setupComboMenu()
+setupComboMenu();
+
 
 const updateComboValue = (selectedOptionId) => {
 
