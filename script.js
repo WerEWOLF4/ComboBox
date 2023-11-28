@@ -180,27 +180,31 @@ const createComboMenuInsert = () => {
 
 
    const updateComboValueEdit = (selectedOptionId) => {
-    let comboInput = document.getElementById('combo2');
-    let selectedOption = document.getElementById(selectedOptionId);
+    const comboInput = document.getElementById('combo2');
+    const selectedOption = document.getElementById(selectedOptionId);
 
     comboInput.value = selectedOption.textContent;
 
     selectedOption.setAttribute('aria-selected', 'true');
     selectedOption.classList.add('option-current');
+    selectedOption.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
 
-    let comboOptions = document.querySelectorAll('.combo-option');
+    const comboMenu = document.getElementById('listbox2');
+    const comboOptions = comboMenu.querySelectorAll('.combo-option');
     comboOptions.forEach(option => {
         if (option.id !== selectedOptionId) {
             option.setAttribute('aria-selected', 'false');
             option.classList.remove('option-current');
+            option.style.backgroundColor = '';
         }
     });
 };
 
+
 updateComboValueEdit("combo1-0");
 
    
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
     const comboContainer = document.querySelector('.js-combobox');
     const comboInput = comboContainer.querySelector('.combo-input');
     const comboMenu = comboContainer.querySelector('.combo-menu');
@@ -518,3 +522,10 @@ const setupComboMenuMulty = () => {
 
 setupComboMenuMulty();
 
+let btn = document.querySelector(".button2");
+
+btn.addEventListener("click", active);
+
+function active() {
+  btn.classList.toggle("is_active");
+}
