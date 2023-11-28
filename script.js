@@ -368,4 +368,153 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
-//
+
+
+// Multi-select Combobox Example
+
+const createComboMenuMulty = () => {
+    let fruitNames = ['Apple', 'Banana', 'Blueberry', 'Boysenberry', 'Cherry', 'Durian', 'Eggplant', 'Fig', 'Grape', 'Guava', 'Huckleberry'];
+   
+       let comboInsert = document.querySelector("#listbox3");
+   
+       for (let i = 0; i < fruitNames.length; i++) {
+           let option = document.createElement('div');
+           option.className = 'combo-option';
+           option.setAttribute('role', 'option');
+           option.id = 'combo1-' + i;
+           option.setAttribute('aria-selected', 'false');
+           option.textContent = fruitNames[i];
+   
+           comboInsert.appendChild(option);
+       }
+   }
+   createComboMenuMulty();
+
+   const addClassOnInput = () => {
+    const comboInput = document.getElementById('combo3');
+    const comboDropdown = document.querySelector('.combo.js-multiselect');
+
+   
+    comboInput.addEventListener('click', () => {
+        comboDropdown.classList.add('open');
+    });
+
+   
+    comboInput.addEventListener('input', () => {
+        comboDropdown.classList.add('open');
+    });
+
+    
+    document.addEventListener('click', (event) => {
+        const clickedElement = event.target;
+
+       
+        if (!comboInput.contains(clickedElement) && !comboDropdown.contains(clickedElement)) {
+            comboDropdown.classList.remove('open');
+        }
+    });
+}
+
+addClassOnInput();
+
+const setupComboMenuMulty = () => {
+    const comboMenu = document.getElementById('listbox3');
+    const selectedOptionsList = document.getElementById('combo3-selected');
+    const searchInput = document.getElementById('combo3');
+
+    let highlightedOption = null;
+
+    comboMenu.addEventListener('click', (event) => {
+        const clickedOption = event.target.closest('.combo-option');
+
+        if (clickedOption) {
+            const isSelected = clickedOption.classList.contains('option-selected');
+
+            if (isSelected) {
+                const selectedOptionItem = Array.from(selectedOptionsList.children).find((li) => {
+                    return li.querySelector('.remove-option').textContent === clickedOption.textContent;
+                });
+
+                if (selectedOptionItem) {
+                    clickedOption.classList.remove('option-current', 'option-selected');
+                    clickedOption.setAttribute('aria-selected', 'false');
+                    selectedOptionItem.remove();
+                }
+            } else {
+                clickedOption.classList.add('option-current', 'option-selected');
+                clickedOption.setAttribute('aria-selected', 'true');
+
+                const selectedOptionItem = document.createElement('li');
+                const selectedOptionButton = document.createElement('button');
+
+                selectedOptionButton.setAttribute('id', `combo3-remove-${Date.now()}`);
+                selectedOptionButton.setAttribute('type', 'button');
+                selectedOptionButton.classList.add('remove-option');
+                selectedOptionButton.textContent = clickedOption.textContent;
+
+                selectedOptionItem.appendChild(selectedOptionButton);
+                selectedOptionsList.appendChild(selectedOptionItem);
+
+                selectedOptionButton.addEventListener('click', () => {
+                    clickedOption.classList.remove('option-current', 'option-selected');
+                    clickedOption.setAttribute('aria-selected', 'false');
+                    selectedOptionItem.remove();
+                });
+            }
+        }
+    });
+
+    searchInput.addEventListener('input', () => {
+        const searchText = searchInput.value.toLowerCase();
+        const allOptions = comboMenu.querySelectorAll('.combo-option');
+        allOptions.forEach((option) => {
+            option.style.backgroundColor = 'white';
+        });
+
+        let maxMatch = 0;
+
+        const matchingOptions = comboMenu.querySelectorAll('.combo-option');
+        matchingOptions.forEach((option) => {
+            const optionText = option.textContent.toLowerCase();
+            const matchCount = (optionText.match(new RegExp(searchText, 'g')) || []).length;
+
+            if (matchCount > maxMatch) {
+                maxMatch = matchCount;
+                highlightedOption = option;
+            }
+        });
+
+        if (highlightedOption) {
+            highlightedOption.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+        }
+    });
+
+    searchInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Tab' || event.key === 'Enter') {
+            if (highlightedOption) {
+                highlightedOption.click();
+                event.preventDefault();
+            }
+        } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+            const allOptions = comboMenu.querySelectorAll('.combo-option');
+            const index = Array.from(allOptions).indexOf(highlightedOption);
+
+            let nextIndex = index;
+            if (event.key === 'ArrowUp') {
+                nextIndex = (index - 1 + allOptions.length) % allOptions.length;
+            } else if (event.key === 'ArrowDown') {
+                nextIndex = (index + 1) % allOptions.length;
+            }
+
+            highlightedOption.style.backgroundColor = 'white';
+            highlightedOption = allOptions[nextIndex];
+            highlightedOption.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+
+            event.preventDefault();
+        }
+    });
+};
+
+
+setupComboMenuMulty();
+
