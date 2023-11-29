@@ -568,8 +568,15 @@ function active() {
 
   const generateExcelFile = (valuesArray) => {
     const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.aoa_to_sheet([Object.keys(valuesArray), Object.values(valuesArray)]);
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+    // Create a worksheet for combo1, combo2, and combo3 data
+    const worksheet = XLSX.utils.aoa_to_sheet([
+      ['Combo1', 'Combo2', 'Combo3'],
+      [valuesArray.combo1, valuesArray.combo2, ''],
+      ...valuesArray.combo3.split('\n').map((element, index) => [index === 0 ? '' : '', '', element]),
+    ]);
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'ComboData');
+
     const excelBlob = workbookToExcelBlob(workbook);
 
     const excelFileLink = document.createElement('a');
@@ -582,16 +589,18 @@ function active() {
     const combo3Selected = document.getElementById('combo3-selected');
     const combo3Items = Array.from(combo3Selected.getElementsByTagName('li'));
 
-    const combo3TextArray = combo3Items.map(li => li.textContent);
+    const combo3TextArray = combo3Items.map(li => li.textContent).join('\n');
 
     const excelData = {
       combo1: document.getElementById('combo1-value').textContent,
       combo2: document.getElementById('combo2').value,
-      combo3: combo3TextArray.join('\n'),
+      combo3: combo3TextArray,
     };
 
     generateExcelFile(excelData);
   };
+
+
   btn.addEventListener('click', () => {
    handleExcelButtonClick();
   });
