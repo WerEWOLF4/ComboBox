@@ -531,34 +531,33 @@ function active() {
 }
 
 
-
-
-btn.addEventListener('click', function() {
-    updateData();
-  });
-
-
   const updateData = () => {
-    
     const data = {
       combo1: document.getElementById('combo1-value').textContent,
       combo2: document.getElementById('combo2').value,
       combo3: Array.from(document.getElementById('combo3-selected').children).map(li => li.textContent),
     };
+  
+   
+    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  
+   
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'fruits.json';
+  
+    document.body.appendChild(a);
+    a.click();
+  
 
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  
+    console.log('Data updated and exported to fruits.json.');
+  };
+  
 
-    fetch(' http://localhost:3000/fruits', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-    .then(response => response.json())
-    .then(result => {
-      console.log('Data updated successfully:', result);
-    })
-    .catch(error => {
-      console.error('Error updating data:', error);
-    });
-  }
+  btn.addEventListener('click', () => {
+    updateData();
+  });
+  
