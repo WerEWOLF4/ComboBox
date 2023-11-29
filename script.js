@@ -522,10 +522,43 @@ const setupComboMenuMulty = () => {
 
 setupComboMenuMulty();
 
-let btn = document.querySelector(".button2");
+let btn = document.querySelector("button");
 
 btn.addEventListener("click", active);
 
 function active() {
   btn.classList.toggle("is_active");
 }
+
+
+
+
+btn.addEventListener('click', function() {
+    updateData();
+  });
+
+
+  const updateData = () => {
+    
+    const data = {
+      combo1: document.getElementById('combo1-value').textContent,
+      combo2: document.getElementById('combo2').value,
+      combo3: Array.from(document.getElementById('combo3-selected').children).map(li => li.textContent),
+    };
+
+
+    fetch(' http://localhost:3000/fruits', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(result => {
+      console.log('Data updated successfully:', result);
+    })
+    .catch(error => {
+      console.error('Error updating data:', error);
+    });
+  }

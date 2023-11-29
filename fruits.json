@@ -1,0 +1,14 @@
+{
+  "fruits": [
+    {
+      "combo1": "Apple",
+      "combo2": "Apple",
+      "combo3": [
+        "Blueberry",
+        "Cherry",
+        "Banana"
+      ],
+      "id": 1
+    }
+  ]
+}
