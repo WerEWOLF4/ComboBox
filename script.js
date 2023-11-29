@@ -560,4 +560,39 @@ function active() {
   btn.addEventListener('click', () => {
     updateData();
   });
+
+  const workbookToExcelBlob = (workbook) => {
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    return new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  };
+
+  const generateExcelFile = (valuesArray) => {
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.aoa_to_sheet([Object.keys(valuesArray), Object.values(valuesArray)]);
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+    const excelBlob = workbookToExcelBlob(workbook);
+
+    const excelFileLink = document.createElement('a');
+    excelFileLink.href = URL.createObjectURL(excelBlob);
+    excelFileLink.download = 'fruits.xlsx';
+    excelFileLink.click();
+  };
+
+  const handleExcelButtonClick = () => {
+    const combo3Selected = document.getElementById('combo3-selected');
+    const combo3Items = Array.from(combo3Selected.getElementsByTagName('li'));
+
+    const combo3TextArray = combo3Items.map(li => li.textContent);
+
+    const excelData = {
+      combo1: document.getElementById('combo1-value').textContent,
+      combo2: document.getElementById('combo2').value,
+      combo3: combo3TextArray.join('\n'),
+    };
+
+    generateExcelFile(excelData);
+  };
+  btn.addEventListener('click', () => {
+   handleExcelButtonClick();
+  });
   
