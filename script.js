@@ -562,44 +562,45 @@ function active() {
   });
 
   const workbookToExcelBlob = (workbook) => {
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    return new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  return new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+};
+
+const generateExcelFile = (valuesArray) => {
+  const workbook = XLSX.utils.book_new();
+
+  const excelTiles = [['Combo1', 'Combo2', 'Combo3']]
+    const combo3Items = valuesArray.combo3.split("\n");
+
+    for (let i = 0; i < combo3Items.length; i++) {
+        i === 0 ? excelTiles.push([valuesArray.combo1, valuesArray.combo2, combo3Items[i]]) : excelTiles.push(['', '', combo3Items[i]]);
+      }
+    const worksheet = XLSX.utils.aoa_to_sheet(excelTiles);
+
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'ComboData');
+
+  const excelBlob = workbookToExcelBlob(workbook);
+
+  const excelFileLink = document.createElement('a');
+  excelFileLink.href = URL.createObjectURL(excelBlob);
+  excelFileLink.download = 'fruits.xlsx';
+  excelFileLink.click();
+};
+
+const handleExcelButtonClick = () => {
+  const combo3Selected = document.getElementById('combo3-selected');
+  const combo3Items = Array.from(combo3Selected.getElementsByTagName('li'));
+
+  const combo3TextArray = combo3Items.map(li => li.textContent);
+
+  const excelData = {
+    combo1: document.getElementById('combo1-value').textContent,
+    combo2: document.getElementById('combo2').value,
+    combo3: combo3TextArray.join('\n'),
   };
 
-  const generateExcelFile = (valuesArray) => {
-    const workbook = XLSX.utils.book_new();
-
-    // Create a worksheet for combo1, combo2, and combo3 data
-    const worksheet = XLSX.utils.aoa_to_sheet([
-      ['Combo1', 'Combo2', 'Combo3'],
-      [valuesArray.combo1, valuesArray.combo2, ''],
-      ...valuesArray.combo3.split('\n').map((element, index) => [index === 0 ? '' : '', '', element]),
-    ]);
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'ComboData');
-
-    const excelBlob = workbookToExcelBlob(workbook);
-
-    const excelFileLink = document.createElement('a');
-    excelFileLink.href = URL.createObjectURL(excelBlob);
-    excelFileLink.download = 'fruits.xlsx';
-    excelFileLink.click();
-  };
-
-  const handleExcelButtonClick = () => {
-    const combo3Selected = document.getElementById('combo3-selected');
-    const combo3Items = Array.from(combo3Selected.getElementsByTagName('li'));
-
-    const combo3TextArray = combo3Items.map(li => li.textContent).join('\n');
-
-    const excelData = {
-      combo1: document.getElementById('combo1-value').textContent,
-      combo2: document.getElementById('combo2').value,
-      combo3: combo3TextArray,
-    };
-
-    generateExcelFile(excelData);
-  };
-
+  generateExcelFile(excelData);
+};
 
   btn.addEventListener('click', () => {
    handleExcelButtonClick();
